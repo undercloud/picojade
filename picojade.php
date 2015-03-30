@@ -38,56 +38,66 @@ class PicoJade {
 		'mobile'        => '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">'
 	);
 
-  public function compile($input, $showIndent = false)
-  {
-    $lines = explode("\n", str_replace("\r", '', rtrim($input, " \t\n") . "\n"));
+	public function compile($input, $showIndent = false)
+	{
+		$lines = explode("\n", str_replace("\r", '', rtrim($input, " \t\n") . "\n"));
 
-    $output = $textBlock = $phpCode = null;
-    $closing = array();
-    foreach ($lines as $n => $line){
-    	if($n === 0){
-    		if(0 === strpos($line,'!!!')){
-    			$doctype = trim(str_replace('!!!','',$line));
-    			$output = isset($this->doctypes[$doctype]) ? $this->doctypes[$doctype] : $this->doctypes['5'];
-    			continue;
-    		}
-    	}
+		$output = $textBlock = $phpCode = null;
+		$closing = array();
+		foreach ($lines as $n => $line){
+			if($n === 0){
+				if(0 === strpos($line,'!!!')){
+					$doctype = trim(str_replace('!!!','',$line));
+					$output = isset($this->doctypes[$doctype]) ? $this->doctypes[$doctype] : $this->doctypes['5'];
+					continue;
+				}
+			}
 
-      $token = $this->createToken();
-      $nextLine = isset($lines[$n + 1]) ? $lines[$n + 1] : '';
-      $indent = mb_strlen($line) - mb_strlen(ltrim($line));
-      $nextIndent = mb_strlen($nextLine) - mb_strlen(ltrim($nextLine));
-      $token->isBlock = ($nextIndent > $indent);
-      $token->line = trim($line, "\t\n ");
-      $indentStr = ($showIndent && !$textBlock) ? str_repeat(' ', $indent) : '';
-      if (trim($line) == '' && !($n === count($lines) - 1 || mb_strpos($nextLine, '<?php') === 0))
-        $indentStr = !$indent = PHP_INT_MAX;
-      elseif ($textBlock !== null && $textBlock < $indent)
-        $token->open = htmlspecialchars(ltrim($line));
-      else{
-        $token = $this->parseLine($token);
-        $textBlock = null;
-      }
-      foreach (array_reverse($closing, true) as $i => $code){
-        if ($i >= $indent){
-          if (!$token->else || $i != $indent)
-            $output .= $code;
-          unset($closing[$i]);
-        }
-      }
-      if ($n !== 0) $output .= "\n";
-      if (mb_strpos($line, '<?php') === 0) $phpCode = true;
-      if ($phpCode){
-        $output .= "$line";
-        if (mb_strpos($line, '?>') === 0) $phpCode = false;
-        continue;
-      }
-      $output .= $indentStr . $token->open;
-      $closing[$indent] = $token->close;
-      if ($token->textBlock) $textBlock = $indent;
-    }
-    return rtrim($output, " \t\n") . "\n";
-  }
+			$token = $this->createToken();
+			$nextLine = isset($lines[$n + 1]) ? $lines[$n + 1] : '';
+			$indent = mb_strlen($line) - mb_strlen(ltrim($line));
+
+			$nextIndent = mb_strlen($nextLine) - mb_strlen(ltrim($nextLine));
+			$token->isBlock = ($nextIndent > $indent);
+			$token->line = trim($line, "\t\n ");
+			$indentStr = ($showIndent && !$textBlock) ? str_repeat(' ', $indent) : '';
+
+			if (trim($line) == '' && !($n === count($lines) - 1 || mb_strpos($nextLine, '<?php') === 0))
+				$indentStr = !$indent = PHP_INT_MAX;
+			elseif ($textBlock !== null && $textBlock < $indent)
+				$token->open = htmlspecialchars(ltrim($line));
+			else{
+				$token = $this->parseLine($token);
+				$textBlock = null;
+			}
+
+			foreach (array_reverse($closing, true) as $i => $code){
+				if ($i >= $indent){
+					if (!$token->else || $i != $indent)
+						$output .= $code;
+					
+					unset($closing[$i]);
+				}
+			}
+
+			if ($n !== 0) $output .= "\n";
+			if (mb_strpos($line, '<?php') === 0) $phpCode = true;
+			
+			if ($phpCode){
+				$output .= "$line";
+			
+				if (mb_strpos($line, '?>') === 0) $phpCode = false;
+					continue;
+			}
+
+			$output .= $indentStr . $token->open;
+			$closing[$indent] = $token->close;
+
+			if ($token->textBlock) $textBlock = $indent;
+		}
+
+		return rtrim($output, " \t\n") . "\n";
+	}
   
 	protected function parseLine($token){
 		if (is_string($token))
@@ -120,7 +130,6 @@ class PicoJade {
 		  (\( (?:(?>[^()]+) | (?3))* \))? (/)? (\.)? ((\-|=|\!=?)|:)? \s* (.*) ~x', $token->line, $m);
 
 		$token->open = empty($m[1]) ? '<div' : "<$m[1]";
-		//(in_array($m[1],$this->selfclosing) ? '/>' :
 		$token->close = empty($m[1]) ? '</div>' : (in_array($m[1],$this->selfclosing) ? '/>' : "</$m[1]>");
 
 		if (!empty($m[2])){
