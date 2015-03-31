@@ -30,4 +30,5 @@ html
       
     script.
       if(true)
-        console.log("It's true")```
+        console.log("It's true")
+```
