@@ -6,7 +6,6 @@ Basic Jade Parser
 html
   head
     title Examples
-
   body
     // comment
     <!-- html comment -->
