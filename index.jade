@@ -5,8 +5,29 @@ html
   body
     div#divid.first.second full div syntax
     #someid div element
-    .someclass div with class
+    #x.someclass div with class
+    style.
+      body {
+        color: blue;
+      }
 
-    img(src="http://www.skimountaineer.com/ROF/Beyond/Pico/PicoAzoresSnow.jpg")
-    input(type="text")
-    foo(data-src="bar")/
+    script(type='text/javascript').
+      if (true) {
+         alert('Ok')
+      }
+
+    p Plain text can include <strong>html</strong>
+
+    img(src="http://www.skimountaineer.com/ROF/Beyond/Pico/PicoAzoresSnow.jpg") Awesome image
+    input(type="checkbox",checked="1") hello
+    foo(data-src="bar")/ Wassup
+
+    // uiuidf
+
+    <!-- okay -->
+
+    ul.lalka#ebeleh(data-src="okay")
+      li.first Item A
+      li Item B
+      li Item C
+    a(href="google.com"): img(src="http://www.skimountaineer.com/ROF/Beyond/Pico/PicoAzoresSnow.jpg")

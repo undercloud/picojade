@@ -130,7 +130,9 @@ class PicoJade {
 		  (\( (?:(?>[^()]+) | (?3))* \))? (/)? (\.)? ((\-|=|\!=?)|:)? \s* (.*) ~x', $token->line, $m);
 
 		$token->open = empty($m[1]) ? '<div' : "<$m[1]";
-		$token->close = empty($m[1]) ? '</div>' : (in_array($m[1],$this->selfclosing) ? '/>' : "</$m[1]>");
+		$token->close = empty($m[1]) ? '</div>' : "</$m[1]>";
+
+		//(in_array($m[1],$this->selfclosing) ? '/>' :
 
 		if (!empty($m[2])){
 			$id = preg_filter('~.*(\#([^\.]*)).*~', '\2', $m[2]);
@@ -145,8 +147,10 @@ class PicoJade {
 
 		$token->close = empty($m[4]) ? $token->close : '';
 
-		if(in_array($m[1],$this->selfclosing))
-			$token->open .= "";
+		if(in_array($m[1],$this->selfclosing)){
+			$token->open .= " />";
+			$token->close = "";
+		}
 		else		
 			$token->open .= empty($m[4]) ? '>' : " />";
 		
