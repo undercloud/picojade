@@ -110,7 +110,7 @@
 				}
 			}
 
-			return rtrim($output, " \t\n")."\n";
+			return rtrim($output, " \t\n");
 		}
 
 		protected function parseLine($token, $indent)
@@ -126,8 +126,8 @@
 					if ($name == 'text') {
 						$token->open = $match[2];
 					} elseif ($name == 'comment') {
-						$token->open = '<?php /* '.$match[2];
-						$token->close = ' */ ?>';
+						$token->open = '<!-- '.$match[2];
+						$token->close = ' -->';
 						$token->textBlock = true;
 					} else {
 						$token = call_user_func(array($this, 'parse'.ucfirst($name)), $token, $indent);
@@ -145,7 +145,7 @@
 			$m = array_fill(0, 5, null);
 			preg_match('~^([\w\d\-_]*[\w\d])? ([\.\#][\w\d\-_\.\#]*[\w\d])?
 			  (\( (?:(?>[^()]+) | (?3))* \))? (/)? (\.)? ((\-|=|\!=?)|:)? \s* (.*) ~x', $token->line, $m);
-
+			  
 			$token->open = empty($m[1]) ? '<div' : "<$m[1]";
 			$token->close = (empty($m[1]) ? '</div>' : "</$m[1]>");
 
@@ -158,16 +158,21 @@
 			}
 
 			if (!empty($m[3])) {
-				$token->open .= ' '.implode(' ', explode(',', trim($m[3], '() ')));
+				$token->open .= ' ' . trim($m[3], '() ');
 			}
 
-			$token->close = empty($m[4]) ? $token->close : '';
+			$token->close = (empty($m[4]) ? $token->close : '');
 
+			if (empty($m[8])) {
+				$token->close = PHP_EOL . str_repeat(' ', $indent) . $token->close;
+			}
+			
 			if (in_array($m[1], $this->selfclosing)) {
 				$token->open .= ' />';
 				$token->close = '';
 			} else {
 				$token->open .= empty($m[4]) ? '>' : ' />';
+
 			}
 
 			$token->textBlock = !empty($m[5]);
@@ -177,7 +182,7 @@
 				$nextToken->isBlock = $token->isBlock;
 				$nextToken = $this->parseLine($nextToken, $indent);
 				$token->open .= $nextToken->open;
-				$token->close = $nextToken->close.$token->close;
+				$token->close = $nextToken->close . $token->close;
 			} else {
 				$token->open .= $m[8];
 			}
