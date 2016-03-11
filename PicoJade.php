@@ -40,8 +40,9 @@
 			'mobile' => '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">',
 		);
 
-		public function compile($input, $showIndent = false)
+		public function compile($input)
 		{
+			$showIndent = true;
 			$lines = explode("\n", str_replace("\r", '', rtrim($input, " \t\n")."\n"));
 
 			$output = $textBlock = $phpCode = null;
