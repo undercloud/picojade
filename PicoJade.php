@@ -1,4 +1,6 @@
 <?php
+	namespace Undercloud;
+
 	class PicoJade
 	{
 		protected $selfclosing = array(
