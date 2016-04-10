@@ -40,7 +40,7 @@ Avail values
 `h1 Header`  
 `#block`  
 `.classname`  
-`div\#block.classname.another`
+`div#block.classname.another`
 
 ##single
 ```input(type="checkbox" value="self closing" checked)```  
