@@ -47,7 +47,7 @@ Avail values
 ```foo(data-src="force closing")/```  
 ```a(href="http://link.to"): img(src="/path/to") Link with image and text```  
 
-#text
+##text
 ```p Lorem ipsum```  
 ```Jade
 script.
