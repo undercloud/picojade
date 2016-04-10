@@ -1,0 +1,19 @@
+{
+	"name": "undercloud/picojade",
+	"description": "Simple Jade parser",
+	"keywords": ["jade","slim","haml","parser"],
+	"homepage": "https://github.com/undercloud/picojade",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "undercloud",
+			"email": "lodashes@gmail.com"
+		}
+	],
+	"require": {
+		"php": ">=5.3.0"
+	},
+	"autoload": {
+		"files": ["PicoJade.php"]
+	}
+}
